@@ -1,14 +1,6 @@
-from globals import runtime_context
+from globals import indent, deindent, runtime_context
 
 from behave import *
-
-def indent(indent):
-  indent = indent + '  '
-  return indent
-
-def deindent(indent):
-  indent = indent[:-2]
-  return indent
 
 @given(u'a routine called {func_name:S}')
 @given(u'a routine called {func_name:S}')

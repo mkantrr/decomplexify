@@ -1,14 +1,14 @@
 from inspect import isclass
+import uuid
+import logging
 
-from models import AgentBasedModel
 from globals import indent, deindent, runtime_context, MODEL
 
 from behave import *
+from mesa.time import *
 
-@given(u'a model and a {agent_name:S} agent')
+@given(u'a {agent_name:S} agent')
 def step_impl(context, agent_name):
-  MODEL = AgentBasedModel()
-  
   context.indent = str()
   agent_file = open('agent_classes.py', 'a')
   agent_file.write(context.indent + "class {agent_name}(Agent):\n".format(
@@ -23,6 +23,17 @@ def step_impl(context, agent_name):
   assert hasattr(runtime_context, agent_name) and isclass(getattr(runtime_context, agent_name))
   context.indent = deindent(context.indent)
   context.indent = deindent(context.indent)
+
+@then('put {num_agents} {agent_name} agents in the model')
+def step_impl(context, num_agents, agent_name):
+  MODEL.N = int(num_agents)
+  for i in range(int(num_agents)):
+    agent = getattr(runtime_context, agent_name)(uuid.uuid4().int, MODEL)
+    MODEL.schedule.add(agent) 
+    
+  num_in_model = 0
+  for agent in MODEL.agents:
+    if isinstance(agent, getattr(runtime_context, agent_name)):
+      num_in_model += 1
+  assert num_in_model == int(num_agents)
   
-  assert MODEL is not None and \
-    (hasattr(runtime_context, agent_name) and isclass(getattr(runtime_context, agent_name)))
