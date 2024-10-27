@@ -1,6 +1,7 @@
-from globals import MODEL, runtime_context
+from globals import MODEL, runtime_context, model_dict
 
 from behave import *
+from mesa.space import *
 
 @when(u'the attribute {variable:S} is {value:S}')
 @when(u'the variable {variable:S} is {value:S}')
@@ -68,6 +69,8 @@ def step_impl(context, variable, value):
     setattr(MODEL, variable, getattr(MODEL, value))
   elif (hasattr(runtime_context, value)):
     setattr(MODEL, variable, getattr(runtime_context, value))
+  elif (value in model_dict.keys()):
+    setattr(MODEL, variable, model_dict[value])
   else:
     setattr(MODEL, variable, value)
   assert hasattr(MODEL, variable)
@@ -151,6 +154,8 @@ def step_impl(context, agent_name, variable, value):
       setattr(agent_obj, variable, getattr(MODEL, value))
     elif (hasattr(runtime_context, value)):
       setattr(agent_obj, variable, getattr(runtime_context, value))
+    elif (value in model_dict.keys()):
+     setattr(MODEL, variable, model_dict[value])
     else:
       setattr(agent_obj, variable, value)
       

@@ -5,24 +5,36 @@ import globals
 
 from behave.__main__ import Configuration, run_behave, Runner
 
-
-
+def setup_files():
+  func_file = open('generated_functions.py', 'w')
+  func_file.write("from globals import MODEL\n")
+  func_file.write("from features.models import AgentBasedModel\n")
+  func_file.write("import sys\n")
+  func_file.write("sys.modules['os']=None\n")
+  func_file.write("sys.modules['subprocess']=None\n")
+  func_file.write("sys.modules['matplotlib']=None\n")
+  func_file.close()
+  agent_file = open('agent_classes.py', 'w')
+  agent_file.write("from globals import MODEL\n")
+  agent_file.write("from mesa import Agent\n")
+  agent_file.close()
 class AgentBasedModelingRunner(Runner):
       
     def order(self, section):
-      if section.filename.endswith(self.ORDER[0]):
-        return 0
-      elif section.filename.endswith(self.ORDER[1]):
-        return 1
-      elif section.filename.endswith(self.ORDER[2]):
-        return 2
-      elif section.filename.endswith(self.ORDER[3]):
-        return 3
+      feature = section.filename.split('/')[-1]
+      return self.ORDER[feature]
       
     def feature_locations(self):
       locations = super().feature_locations()
+      print(locations)
       
-      self.ORDER = ['model.feature', 'routine.feature', 'agent.feature', 'running.feature'] 
+      self.ORDER = {'routines.feature' : 0,
+                    'model.feature' : 1,
+                    'model_routines.feature' : 2,
+                    'agents.feature' : 3,
+                    'agent_routines.feature' : 4,
+                    'running.feature': 5
+      }
       locations.sort(key=self.order)
       #for location in locations:
       #  if location.filename.endswith("model.feature"):
@@ -41,11 +53,7 @@ def main():
     
     globals.init()
     
-    open('generated_functions.py', 'w').close()
-    agent_file = open('agent_classes.py', 'w')
-    agent_file.write("from mesa import Agent\n")
-    agent_file.close ()
-    
+    setup_files() 
     config = Configuration(verbose=True)
     retval = run_behave(config, runner_class=AgentBasedModelingRunner)
     
