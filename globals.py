@@ -9,6 +9,13 @@ def deindent(indent):
   indent[0] = indent[0][:-2]
   return [indent[0], indent[1] - 1]
 
+# --------------- BEGIN COMMON STEP ROUTINE ---------------------
+def step(self):
+  self.schedule.step()
+  self.datacollector.collect()
+  
+# --------------- END COMMON STEP ROUTINE -----------------------
+
 class Context:
   """Object for storing context"""
   def __init__(self):
@@ -31,19 +38,11 @@ def init():
     "is greater than or equal to": ">="
   } 
   
-  global model_dict_write
-  model_dict_write = {
-    "the model's grid" : "MODEL.grid", 
-    "the empty cells in the grid" : "MODEL.grid.empties()", 
-    "the grid's coordinates" : "MODEL.grid.coord_iter()", 
-    "the agent's current position" : "self.pos", 
-    "" : "", 
-    "" : "", 
-    "" : "", 
-    "" : "", 
-    "" : "", 
-    "" : "", 
-    "" : "", 
-  }
+  global func_write
+  func_write = dict()
+  
   global model_dict
   model_dict = dict()
+  
+  global data_dict
+  data_dict = dict()

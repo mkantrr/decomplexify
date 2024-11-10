@@ -1,4 +1,4 @@
-from globals import MODEL
+from globals import MODEL, model_dict, func_write
 
 from behave import *
 from mesa.time import *

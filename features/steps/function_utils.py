@@ -1,7 +1,7 @@
 from importlib import reload
 from types import MethodType
 
-from globals import indent, deindent, MODEL, runtime_context, model_dict_write, operator_dict
+from globals import indent, deindent, MODEL, runtime_context, func_write, operator_dict
 import generated_functions
 import agent_classes
 from behave import *
@@ -54,8 +54,8 @@ def step_impl(context, func_name, parameters):
 @when(u'it has an attribute {variable:S} equal to {value:S}')
 @when(u'it has a variable {variable:S} equal to {value:S}')
 def step_impl(context, variable, value):
-  if (value in model_dict_write.keys()):
-    value = model_dict_write[value]
+  if (value in func_write.keys()):
+    value = func_write[value]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + '{variable} = {value}\n'.format(
     variable=variable,
@@ -67,9 +67,11 @@ def step_impl(context, variable, value):
     
 @when('something needs to be done for all things in {item}')
 def step_impl(context, item):
+  if (item in func_write.keys()):
+    item = func_write[item]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'for thing in {value}:\n'.format(
-    value=model_dict_write[item]
+    value=item
   ))
   func_file.close()
   context.prev_indent = context.indent
@@ -77,6 +79,10 @@ def step_impl(context, item):
   
 @when(u'the condition {item1:S} {operator:S} {item2:S} is met')
 def step_impl(context, item1, operator, item2):
+  if (item1 in func_write.keys()):
+    item1 = func_write[item1]
+  if (item2 in func_write.keys()):
+    item2 = func_write[item2]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'if ({item1} {operator} {item2}):\n'.format(
     item1=item1,
@@ -89,6 +95,10 @@ def step_impl(context, item1, operator, item2):
   
 @when(u'the condition {item1:S} {operator:S} {item2:S} is not met')
 def step_impl(context, item1, operator, item2):
+  if (item1 in func_write.keys()):
+    item1 = func_write[item1]
+  if (item2 in func_write.keys()):
+    item2 = func_write[item2]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'if not ({item1} {operator} {item2}):\n'.format(
     item1=item1,
@@ -101,9 +111,11 @@ def step_impl(context, item1, operator, item2):
   
 @when(u'it is true that {condition}')
 def step_impl(context, condition):
+  if (condition in func_write.keys()):
+    condition = func_write[condition]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'if ({condition}):\n'.format(
-    condition=model_dict_write[condition]
+    condition=condition
   ))
   func_file.close()
   context.prev_indent = context.indent
@@ -111,9 +123,11 @@ def step_impl(context, condition):
   
 @when(u'it is not true that {condition}')
 def step_impl(context, condition):
+  if (condition in func_write.keys()):
+    condition = func_write[condition]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'if not ({condition}):\n'.format(
-    condition=model_dict_write[condition]
+    condition=condition
   ))
   func_file.close()
   context.prev_indent = context.indent
@@ -131,6 +145,8 @@ def step_impl(context):
 @when('{func_name} returns {expression}')
 @when('{func_name} yields {expression}')
 def step_impl(context, func_name, expression):
+  if (expression in func_write.keys()):
+    expression = func_write[expression]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'return {expression}\n'.format(expression=expression))
   func_file.close()
@@ -165,7 +181,6 @@ def step_impl(context, func_name):
 @given(u'a model routine called {func_name:S} with attribute {parameter:S}')
 @given(u'a model routine called {func_name:S} with variable {parameter:S}')
 def step_impl(context, func_name, parameter):
-  
   context.indent = [str(), 0]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + "def {func_name}(self: AgentBasedModel, {parameter}):\n".format(
@@ -198,7 +213,7 @@ def step_impl(context, func_name, parameters):
 def step_impl(context, variable, value):
   if (hasattr(MODEL, value)):
     func_file = open('generated_functions.py', 'a')
-    func_file.write(context.indent[0] + '{variable} = self.model.{value}\n'.format(
+    func_file.write(context.indent[0] + '{variable} = MODEL.{value}\n'.format(
       variable=variable,
       value=value
   ))

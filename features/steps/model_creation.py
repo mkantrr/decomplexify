@@ -1,7 +1,7 @@
 import uuid
 
 from models import AgentBasedModel
-from globals import runtime_context, MODEL
+from globals import MODEL
 
 from behave import *
 

@@ -18,6 +18,7 @@ def setup_files():
   agent_file.write("from globals import MODEL\n")
   agent_file.write("from mesa import Agent\n")
   agent_file.close()
+  
 class AgentBasedModelingRunner(Runner):
       
     def order(self, section):
@@ -36,15 +37,7 @@ class AgentBasedModelingRunner(Runner):
                     'running.feature': 5
       }
       locations.sort(key=self.order)
-      #for location in locations:
-      #  if location.filename.endswith("model.feature"):
-      #    ordered_locations.insert(0, location)
-      #  elif location.filename.endswith("routine.feature"):
-      #    ordered_locations.insert(1, location)
-      #  else:
-      #    ordered_locations.append(location)
       return locations
-
 
 def main():
     orig_stdout = sys.stdout
