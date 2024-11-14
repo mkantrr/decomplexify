@@ -1,0 +1,8 @@
+.venv
+.venv/*
+__pycache__/
+__pycache__/*
+out.txt
+features/*.feature
+agent_classes.py
+generated_functions.py
