@@ -3,6 +3,7 @@
 __pycache__/
 __pycache__/*
 out.txt
+behave.out
 features/*.feature
 agent_classes.py
 generated_functions.py
