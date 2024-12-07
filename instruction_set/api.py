@@ -67,7 +67,7 @@ def fetch_model_dataframe():
 
 # Endpoint to handle the creation of text files
 @api.route('/agent-data', methods=['GET'])
-def fetch_model_dataframe():
+def fetch_agent_dataframe():
     try:
         data = globals.MODEL.datacollector.get_agent_vars_dataframe().to_json(orient='split')
         return jsonify(data), 200
