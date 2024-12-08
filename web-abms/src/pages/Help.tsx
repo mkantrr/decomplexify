@@ -31,7 +31,7 @@ const Help: React.FC = () => {
                             systems through agent-based modeling. It allows users to define models
                             using an intuitive Gherkin-like instruction set without needing to code.
                             See examples{' '}
-                            <Link component={RouterLink} to="/documentation" underline="hover">
+                            <Link component={RouterLink} to="/docs" underline="hover">
                                 here
                             </Link>.
                         </Typography>
@@ -83,7 +83,7 @@ const Help: React.FC = () => {
                     <AccordionDetails>
                         <Typography>
                             Visit the{' '}
-                            <Link component={RouterLink} to="/documentation" underline="hover">
+                            <Link component={RouterLink} to="/docs" underline="hover">
                                 Documentation page
                             </Link>{' '}
                             for detailed instructions and examples of how to use Decomplexify. You

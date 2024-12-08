@@ -19,8 +19,7 @@ def step_impl(context, agent_name):
   context.indent = globals.indent(context.indent)
   agent_file.write(context.indent[0] + "def __init__(self, unique_id):\n") 
   context.indent = globals.indent(context.indent)
-  agent_file.write(context.indent[0] + "global MODEL\n") 
-  agent_file.write(context.indent[0] + "super().__init__(unique_id, MODEL)\n")
+  agent_file.write(context.indent[0] + "super().__init__(unique_id, globals.MODEL)\n")
   agent_file.close()
   reload(agent_classes)
   setattr(globals.runtime_context, agent_name, getattr(__import__('agent_classes'), agent_name))
@@ -34,6 +33,7 @@ def step_impl(context, num_agents, agent_name):
   globals.MODEL.N = int(num_agents)
   for i in range(int(num_agents)):
     agent = getattr(globals.runtime_context, agent_name)(uuid.uuid4().int)
+    globals.func_write.update({"the agent's position": agent.pos})
     globals.MODEL.schedule.add(agent) 
     
   num_in_model = 0

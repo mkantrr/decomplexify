@@ -44,6 +44,7 @@ def run_model_creation():
         retval = run_behave(config, runner_class=AgentBasedModelingRunner)
         
         pprint(vars(globals.MODEL)) 
+        pprint(vars(globals.runtime_context)) 
         if retval != 0:
             raise SystemError("Gherkin grammar rules could not run properly. Check your syntax!")
         
@@ -106,9 +107,9 @@ def create_files():
 @api.route('/api/model-data', methods=['GET'])
 def fetch_model_dataframe():
     try:
-        print(f"Fetching model data: {globals.MODEL}")  # Check if MODEL is initialized properly
-        data = globals.MODEL.datacollector.get_model_vars_dataframe().to_json(orient='split')
-        return jsonify(data), 200
+        print(f"Fetching model data: {globals.MODEL.datacollector.get_model_vars_dataframe()}")
+        data = globals.MODEL.datacollector.get_model_vars_dataframe()
+        return jsonify({"columns": data.columns.tolist(), "data": data.values.tolist()}), 200
     except Exception as e:
         print(f"Error fetching model data: {e}")
         return jsonify({'error': str(e)}), 500
@@ -117,9 +118,9 @@ def fetch_model_dataframe():
 @api.route('/api/agent-data', methods=['GET'])
 def fetch_agent_dataframe():
     try:
-        print(f"Fetching agent data: {globals.MODEL}")  # Check if MODEL is initialized properly
+        print(f"Fetching agent data: {globals.MODEL.datacollector.get_agent_vars_dataframe()}")
         data = globals.MODEL.datacollector.get_agent_vars_dataframe().to_json(orient='split')
-        return jsonify(data), 200
+        return jsonify({"columns": data['columns'], "data": data['data']}), 200
     except Exception as e:
         print(f"Error fetching agent data: {e}")
         return jsonify({'error': str(e)}), 500

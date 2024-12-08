@@ -31,21 +31,22 @@ def step_impl(context):
     MethodType(globals.step_no_data, globals.MODEL))
 
   assert hasattr(globals.MODEL, "step") and isinstance(globals.MODEL.schedule, SimultaneousActivation)
-  
-@when('the agents are activated in order of stages')
-def step_impl(context):
-  globals.MODEL.schedule = StagedActivation(globals.MODEL)
-  
-  setattr(globals.MODEL, "step",
-    MethodType(globals.step_no_data, globals.MODEL))
-
-  assert hasattr(globals.MODEL, "step") and isinstance(globals.MODEL.schedule, StagedActivation)
-  
-@when('the agents are activated in random order by type')
-def step_impl(context):
-  globals.MODEL.schedule = RandomActivationByType(globals.MODEL)
-  
-  setattr(globals.MODEL, "step",
-    MethodType(globals.step_no_data, globals.MODEL))
-
-  assert hasattr(globals.MODEL, "step") and isinstance(globals.MODEL.schedule, RandomActivationByType)
+ 
+# ------ FUNCTIONALITY TOO COMPLEX FOR CURRENT VERSION OF DECOMPLEXIFY ----- 
+#@when('the agents are activated in order of stages')
+#def step_impl(context):
+#  globals.MODEL.schedule = StagedActivation(globals.MODEL)
+#  
+#  setattr(globals.MODEL, "step",
+#    MethodType(globals.step_no_data, globals.MODEL))
+#
+#  assert hasattr(globals.MODEL, "step") and isinstance(globals.MODEL.schedule, StagedActivation)
+#  
+#@when('the agents are activated in random order by type')
+#def step_impl(context):
+#  globals.MODEL.schedule = RandomActivationByType(globals.MODEL)
+#  
+#  setattr(globals.MODEL, "step",
+#    MethodType(globals.step_no_data, globals.MODEL))
+#
+#  assert hasattr(globals.MODEL, "step") and isinstance(globals.MODEL.schedule, RandomActivationByType)

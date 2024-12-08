@@ -71,7 +71,7 @@ def step_impl(context, item):
   if (item in globals.func_write.keys()):
     item = globals.func_write[item]
   func_file = open('generated_functions.py', 'a')
-  func_file.write(context.indent[0] + 'for thing in {value}:\n'.format(
+  func_file.write(context.indent[0] + 'for thing in f{item}:\n'.format(
     value=item
   ))
   func_file.close()
@@ -177,7 +177,6 @@ def step_impl(context, func_name):
   ))
   context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
-  func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
 
 @given(u'a model routine called {func_name:S} with attribute {parameter:S}')
@@ -191,7 +190,6 @@ def step_impl(context, func_name, parameter):
   ))
   context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
-  func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
   
 @given(u'a model routine called {func_name:S} with attributes {parameters:S}')
@@ -205,7 +203,6 @@ def step_impl(context, func_name, parameters):
   ))
   context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
-  func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
   
 @when(u'it has an attribute {variable:S} that is the model attribute {value:S}')
@@ -215,7 +212,7 @@ def step_impl(context, func_name, parameters):
 def step_impl(context, variable, value):
   if (hasattr(globals.MODEL, value)):
     func_file = open('generated_functions.py', 'a')
-    func_file.write(context.indent[0] + '{variable} = MODEL.{value}\n'.format(
+    func_file.write(context.indent[0] + '{variable} = globals.MODEL.{value}\n'.format(
       variable=variable,
       value=value
   ))
@@ -247,7 +244,6 @@ def step_impl(context, agent_name, func_name):
   ))
   context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
-  func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
 
 @given(u'a {agent_name} agent routine called {func_name:S} with attribute {parameter:S}')
@@ -263,7 +259,6 @@ def step_impl(context, agent_name, func_name, parameter):
   ))
   context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
-  func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
   
 @given(u'a {agent_name} agent routine called {func_name:S} with attributes {parameters:S}')
@@ -279,7 +274,6 @@ def step_impl(context, agent_name, func_name, parameters):
   ))
   context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
-  func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
   
 @when(u'it has an attribute {variable:S} that is the {agent_name:S} agent attribute {value:S}')

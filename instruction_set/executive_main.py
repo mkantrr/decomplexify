@@ -8,7 +8,7 @@ from behave.__main__ import Configuration, run_behave
 
 def setup_files():
   func_file = open('generated_functions.py', 'w')
-  func_file.write("from globals import MODEL\n")
+  func_file.write("import globals\n")
   func_file.write("from features.models import AgentBasedModel\n")
   func_file.write("import sys\n")
   func_file.write("sys.modules['os']=None\n")
@@ -16,7 +16,7 @@ def setup_files():
   func_file.write("sys.modules['matplotlib']=None\n")
   func_file.close()
   agent_file = open('agent_classes.py', 'w')
-  agent_file.write("from globals import MODEL\n")
+  agent_file.write("import globals\n")
   agent_file.write("from mesa import Agent\n")
   agent_file.write("import sys\n")
   agent_file.write("sys.modules['os']=None\n")
@@ -32,7 +32,6 @@ def break_down():
   del globals.operator_dict
   del globals.func_write
   del globals.model_dict
-  del globals.data_dict
 
 def main():
     orig_stdout = sys.stdout

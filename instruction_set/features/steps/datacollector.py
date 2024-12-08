@@ -14,18 +14,18 @@ def step_impl(context, variable):
     
   if (hasattr(globals.runtime_context, 'model_reporters')):
     if (hasattr(globals.MODEL, variable)):
-      model_reporters = {'{variable}'.format(variable): '{variable}'.format(variable)}
+      model_reporters = {f'{variable}': f'{variable}'}
       globals.runtime_context.model_reporters.update(model_reporters)
     elif (hasattr(globals.runtime_context, variable)):
       setattr(globals.MODEL, variable, getattr(globals.runtime_context, variable))
-      model_reporters = {'{variable}'.format(variable): '{variable}'.format(variable)}
+      model_reporters = {f'{variable}': f'{variable}'}
       globals.runtime_context.model_reporters.update(model_reporters)
   else:
     if (hasattr(globals.MODEL, variable)):
-      globals.runtime_context.model_reporters = {'{variable}'.format(variable): '{variable}'.format(variable)}
+      globals.runtime_context.model_reporters = {f'{variable}': f'{variable}'}
     elif (hasattr(globals.runtime_context, variable)):
       setattr(globals.MODEL, variable, getattr(globals.runtime_context, variable))
-      globals.runtime_context.model_reporters = {'{variable}'.format(variable): '{variable}'.format(variable)}
+      globals.runtime_context.model_reporters = {f'{variable}': f'{variable}'}
       
   assert type(globals.MODEL).__name__ == AgentBasedModel.__name__ \
     and globals.runtime_context.model_reporters is not {}
@@ -36,16 +36,16 @@ def step_impl(context, func_name):
     
   if (hasattr(globals.runtime_context, 'model_reporters')):
     if (hasattr(globals.MODEL, func_name)):
-      model_reporters = {'{func_name}'.format(func_name): getattr(globals.MODEL, func_name)}
+      model_reporters = {f'{func_name}': getattr(globals.MODEL, func_name)}
       globals.runtime_context.model_reporters.update(model_reporters)
     elif (hasattr(globals.runtime_context, func_name)):
-      model_reporters = {'{func_name}'.format(func_name): getattr(globals.runtime_context, func_name)}
+      model_reporters = {f'{func_name}': getattr(globals.runtime_context, func_name)}
       globals.runtime_context.model_reporters.update(model_reporters)
   else:
     if (hasattr(globals.MODEL, func_name)):
-      globals.runtime_context.model_reporters = {'{func_name}'.format(func_name): getattr(globals.MODEL, func_name)}
+      globals.runtime_context.model_reporters = {f'{func_name}': getattr(globals.MODEL, func_name)}
     elif (hasattr(globals.runtime_context, func_name)):
-      globals.runtime_context.model_reporters = {'{func_name}'.format(func_name): getattr(globals.runtime_context, func_name)}
+      globals.runtime_context.model_reporters = {f'{func_name}': getattr(globals.runtime_context, func_name)}
   
   assert type(globals.MODEL).__name__ == AgentBasedModel.__name__ \
     and globals.runtime_context.model_reporters is not {}
@@ -60,16 +60,16 @@ def step_impl(context, func_names):
   for func_name in func_names:
     if (hasattr(globals.runtime_context, 'model_reporters')):
       if (hasattr(globals.MODEL, func_name)):
-        model_reporters = {'{func_name}'.format(func_name): getattr(globals.MODEL, func_name)}
+        model_reporters = {f'{func_name}': getattr(globals.MODEL, func_name)}
         globals.runtime_context.model_reporters.update(model_reporters)
       elif (hasattr(globals.runtime_context, func_name)):
-        model_reporters = {'{func_name}'.format(func_name): getattr(globals.runtime_context, func_name)}
+        model_reporters = {f'{func_name}': getattr(globals.runtime_context, func_name)}
         globals.runtime_context.model_reporters.update(model_reporters)
     else:
       if (hasattr(globals.MODEL, func_name)):
-        globals.runtime_context.model_reporters = {'{func_name}'.format(func_name): getattr(globals.MODEL, func_name)}
+        globals.runtime_context.model_reporters = {f'{func_name}': getattr(globals.MODEL, func_name)}
       elif (hasattr(globals.runtime_context, func_name)):
-        globals.runtime_context.model_reporters = {'{func_name}'.format(func_name): getattr(globals.runtime_context, func_name)}
+        globals.runtime_context.model_reporters = {f'{func_name}': getattr(globals.runtime_context, func_name)}
       
   assert type(globals.MODEL).__name__ == AgentBasedModel.__name__ \
     and globals.runtime_context.model_reporters is not {}
@@ -81,12 +81,12 @@ def step_impl(context, agent_name, variable):
   if (hasattr(globals.runtime_context, 'agent_reporters')):
     if (hasattr(globals.runtime_context, agent_name)):
       if (hasattr(getattr(globals.runtime_context, agent_name), variable)):
-        agent_reporters = {'{variable}'.format(variable): '{variable}'.format(variable)}
+        agent_reporters = {f'{variable}': f'{variable}'}
         globals.runtime_context.agent_reporters.update(agent_reporters)
   else:
     if (hasattr(globals.runtime_context, agent_name)):
       if (hasattr(getattr(globals.runtime_context, agent_name), variable)):
-        globals.runtime_context.agent_reporters = {'{variable}'.format(variable): '{variable}'.format(variable)}
+        globals.runtime_context.agent_reporters = {f'{variable}': f'{variable}'}
       
   assert type(globals.MODEL).__name__ == AgentBasedModel.__name__ \
     and globals.runtime_context.agent_reporters is not {}
@@ -97,12 +97,12 @@ def step_impl(context, agent_name, func_name):
   if (hasattr(globals.runtime_context, 'agent_reporters')):
     if (hasattr(globals.runtime_context, agent_name)):
       if (hasattr(getattr(globals.runtime_context, agent_name), func_name)):
-        agent_reporters = {'{func_name}'.format(func_name): getattr(getattr(globals.runtime_context, agent_name), func_name)}
+        agent_reporters = {f'{func_name}': getattr(getattr(globals.runtime_context, agent_name), func_name)}
         globals.runtime_context.agent_reporters.update(agent_reporters)
   else:
     if (hasattr(globals.runtime_context, agent_name)):
       if (hasattr(getattr(globals.runtime_context, agent_name), func_name)):
-        globals.runtime_context.agent_reporters = {'{func_name}'.format(func_name): getattr(getattr(globals.runtime_context, agent_name), func_name)}
+        globals.runtime_context.agent_reporters = {f'{func_name}': getattr(getattr(globals.runtime_context, agent_name), func_name)}
     
   assert type(globals.MODEL).__name__ == AgentBasedModel.__name__ \
     and globals.runtime_context.agent_reporters is not {}
@@ -117,11 +117,12 @@ def step_impl(context, agent_name, func_names):
     if (hasattr(globals.runtime_context, 'agent_reporters')):
       if (hasattr(globals.runtime_context, agent_name)):
         if (hasattr(getattr(globals.runtime_context, agent_name), func_name)):
-          agent_reporters = {'{func_name}'.format(func_name): getattr(getattr(globals.runtime_context, agent_name), func_name)}
+          agent_reporters = {f'{func_name}': getattr(getattr(globals.runtime_context, agent_name), func_name)}
           globals.runtime_context.agent_reporters.update(agent_reporters)
     else:
-      if (hasattr(getattr(globals.runtime_context, agent_name), func_name)):
-        globals.runtime_context.agent_reporters = {'{func_name}'.format(func_name): getattr(getattr(globals.runtime_context, agent_name), func_name)}
+      if (hasattr(globals.runtime_context, agent_name)):
+        if (hasattr(getattr(globals.runtime_context, agent_name), func_name)):
+          globals.runtime_context.agent_reporters = {f'{func_name}': getattr(getattr(globals.runtime_context, agent_name), func_name)}
       
   assert type(globals.MODEL).__name__ == AgentBasedModel.__name__ \
     and globals.runtime_context.agent_reporters is not {}

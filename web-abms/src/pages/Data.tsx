@@ -4,63 +4,116 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
+import Papa from 'papaparse'; // For CSV parsing
+import { saveAs } from 'file-saver'; // For saving the CSV file
 import * as XLSX from 'xlsx'; // SheetJS for Excel export
 
-interface RowData {
-    [key: string]: any; // Flexible structure for each row
-}
+import DynamicTable from '../components/DynamicTable';
 
 const Data: React.FC = () => {
     const theme = useTheme();
 
-    const [data, setData] = useState<RowData[]>([]); // Array of objects for rows
+    const [data, setData] = useState<(string | number | null)[][]>([[]]); // Array of objects for rows
     const [columns, setColumns] = useState<string[]>([]); // Array of column names
+
+    const [modelMessage, setModelMessage] = useState<string | null>(null);
+    const [modelError, setModelError] = useState<boolean>(false);
+    const [agentMessage, setAgentMessage] = useState<string | null>(null);
+    const [agentError, setAgentError] = useState<boolean>(false);
 
     // Fetch data from the API
     const fetchModelData = async () => {
         try {
-            const response = await axios.get('/api/data/model'); // Replace with your API endpoint
+            const response = await axios.get('http://localhost:3001/api/model-data'); // Replace with your API endpoint
+            // Check for errors in the response
+            if (response.data.error) {
+            throw new Error(response.data.error);
+            }
+            
             const { columns, data } = response.data; // Assume API returns { columns: [], data: [] }
             setColumns(columns);
             setData(data);
-        } catch (error) {
-            console.error('Error fetching model data:', error);
+
+            // Update message state
+            setModelError(false);
+            setModelMessage(response.data.message || 'Model data fetched successfully!');
+        } catch (error: any) {
+            // Handle errors
+            setModelError(true);
+            setModelMessage(
+                error.response?.data?.error || error.message || 'Failed to fetch model data.'
+            );
         }
     };
 
     // Fetch data from the API
     const fetchAgentData = async () => {
         try {
-            const response = await axios.get('/api/data/agent'); // Replace with your API endpoint
+            const response = await axios.get('http://localhost:3001/api/agent-data');
+    
+            // Check for errors in the response
+            if (response.data.error) {
+                throw new Error(response.data.error);
+            }
+            
             const { columns, data } = response.data; // Assume API returns { columns: [], data: [] }
             setColumns(columns);
             setData(data);
-        } catch (error) {
-            console.error('Error fetching agent data:', error);
+
+            // Update message state
+            setAgentError(false);
+            setAgentMessage(response.data.message || 'Agent data fetched successfully!');
+        } catch (error: any) {
+            // Handle errors
+            setAgentError(true);
+            setAgentMessage(
+                error.response?.data?.error || error.message || 'Failed to fetch agent data.'
+            );
         }
     };
 
 
-    // Export to CSV
+    // Function to export the data to CSV
     const exportToCSV = () => {
-        const csvContent =
-            [columns.join(','), ...data.map(row => columns.map(col => row[col]).join(','))].join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'dataset.csv');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      // Convert data into a format compatible with PapaParse
+      const csvData = data.map(row => {
+        return row.map(cell => (cell !== null ? cell : "")); // Handle null values in the data
+      });
+
+      const csv = Papa.unparse({
+        fields: columns, // Use column names as headers
+        data: csvData,   // Use the table data as rows
+      });
+
+      // Trigger the file download
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      saveAs(blob, "dataset.csv");
     };
 
-    // Export to Excel
+    // Function to export data to Excel (XLSX)
     const exportToExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(data);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Dataset');
-        XLSX.writeFile(workbook, 'dataset.xlsx');
+      // Create a new workbook
+      const wb = XLSX.utils.book_new();
+
+      // Create a worksheet from the data
+      const ws = XLSX.utils.aoa_to_sheet([columns, ...data]);  // Columns as first row, followed by the data
+
+      // Append the worksheet to the workbook
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+      // Write the workbook to a Blob and trigger a download
+      const wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
+
+      // Convert binary string to Blob
+      const buf = new ArrayBuffer(wbout.length);
+      const view = new Uint8Array(buf);
+      for (let i = 0; i < wbout.length; i++) {
+        view[i] = wbout.charCodeAt(i) & 0xff;
+      }
+
+      // Create Blob and trigger file download
+      const blob = new Blob([buf], { type: "application/octet-stream" });
+      saveAs(blob, "dataset.xlsx");
     };
 
     return (
@@ -85,34 +138,33 @@ const Data: React.FC = () => {
                     Fetch Agent Data
                 </Button>
             </Box>
-            <Box sx={styles.tableContainer}>
-                {data.length > 0 ? (
-                    <table style={styles.table}>
-                        <thead>
-                            <tr>
-                                {columns.map((col, index) => (
-                                    <th key={index} style={styles.th}>
-                                        {col}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((row, rowIndex) => (
-                                <tr key={rowIndex}>
-                                    {columns.map((col, colIndex) => (
-                                        <td key={colIndex} style={styles.td}>
-                                            {row[col]}
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <Typography>No data fetched yet.</Typography>
+            {modelMessage && (
+                    <Typography
+                        sx={{
+                            color: modelError ? '#ff6347' // Red for error
+                            : theme.palette.mode === 'dark' ? '#fff' // White for success in dark mode
+                                                        : '#000', // Black for success in light mode
+                            fontWeight: 'bold',
+                            marginBottom: '10px',
+                        }}
+                    >
+                        Model Fetch: {modelMessage}
+                    </Typography>
                 )}
-            </Box>
+                {agentMessage && (
+                    <Typography
+                        sx={{
+                            color: agentError ? '#ff6347' // Red for error
+                            : theme.palette.mode === 'dark' ? '#fff' // White for success in dark mode
+                                                        : '#000', // Black for success in light mode
+                            fontWeight: 'bold',
+                            marginBottom: '10px',
+                        }}
+                    >
+                        Agent Fetch: {agentMessage}
+                    </Typography>
+                )}
+            <DynamicTable columns={columns} data={data}/>
             <Box sx={styles.buttonsContainer}>
                 <Button
                     variant="contained"

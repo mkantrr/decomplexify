@@ -5,7 +5,10 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
+import Link from '@mui/material/Link';
 import axios from 'axios';
+
+import { Link as RouterLink } from 'react-router-dom';
 
 const LOCAL_STORAGE_KEY = 'createPageForm';
 const CELL_SIZE = 50; // Grid cell size in pixels
@@ -153,6 +156,16 @@ const Create: React.FC = () => {
 
     return (
         <Box sx={styles.page}>
+            <Typography sx={{
+                    fontWeight: 'bold', 
+                    marginBottom: '5px',
+                    marginLeft: '10px'
+                }}>
+                    Visit the {' '}
+                    <Link component={RouterLink} to="/docs" underline="hover">
+                        Documentation page
+                    </Link>{' '} to understand the Gherkin grammar you need to know!
+                </Typography>
             <Box sx={styles.container}>
                 {/* Dynamic Grid */}
                 {!(gridData.key.length === 0) && (
@@ -295,7 +308,6 @@ const DynamicGrid: React.FC<{ data: [[]] }> = ({ data }) => {
         16: '#03a9f4', // Light Blue
         17: '#ff5722', // Deep Orange
         18: '#000000', // Black
-        19: '#bdbdbd', // Light Gray
     };
 
     return (
@@ -320,7 +332,7 @@ const DynamicGrid: React.FC<{ data: [[]] }> = ({ data }) => {
                         <Box
                             sx={gridStyles.cell}
                             style={{
-                                backgroundColor: colorMap[cell] || '#eee', // Dynamic shading based on value
+                                backgroundColor: colorMap[cell] || '#bbb', // Dynamic shading based on value
                             }}
                         />
                     </Tooltip>
@@ -374,7 +386,7 @@ const gridStyles = {
       width: '100%',
   },
   cell: {
-      border: '1px solid #ccc',
+      border: '1px solid #ddd',
       aspectRatio: '1', // Ensure square cells
       cursor: 'pointer',
   },

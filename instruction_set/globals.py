@@ -12,7 +12,7 @@ def deindent(indent):
 # --------------- BEGIN COMMON STEP ROUTINE ---------------------
 def step(self):
   self.schedule.step()
-  self.datacollector.collect()
+  self.datacollector.collect(MODEL)
   
 def step_no_data(self):
   self.schedule.step()
@@ -52,5 +52,3 @@ def init():
   global model_dict
   model_dict = dict()
   
-  global data_dict
-  data_dict = dict()
