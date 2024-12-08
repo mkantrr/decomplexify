@@ -42,6 +42,29 @@ const Documentation: React.FC = () => {
                 available rules and examples for using Decomplexify.
             </Typography>
 
+            {/* Define the Basic Routines */}
+            <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6">Define Basic Routines</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            Use the <strong>When</strong> keyword to define model behaviors or
+                            routines.
+                        </Typography>
+                        <Typography>
+                            <strong>Example:</strong>
+                        </Typography>
+                        <ExampleBox>
+                            When agents move randomly across the grid
+                        </ExampleBox>
+                        <Typography>
+                            This specifies that agents will randomly move on the grid during the
+                            simulation.
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+
             {/* Grammar Rules Sections */}
             <SectionContainer>
                 {/* Define the Model */}

@@ -12,9 +12,8 @@ class AgentBasedModelingRunner(Runner):
       self.ORDER = {'routines.feature' : 0,
                     'model.feature' : 1,
                     'model_routines.feature' : 2,
-                    'agents.feature' : 3,
+                    'agent.feature' : 3,
                     'agent_routines.feature' : 4,
-                    'running.feature': 5
       }
       locations.sort(key=self.order)
       return locations

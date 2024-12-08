@@ -2,8 +2,8 @@ import sys
 import os
 
 import globals
-from behave_runner import AgentBasedModelingRunner
 
+from behave_runner import AgentBasedModelingRunner
 from behave.__main__ import Configuration, run_behave
 
 def setup_files():
@@ -18,11 +18,25 @@ def setup_files():
   agent_file = open('agent_classes.py', 'w')
   agent_file.write("from globals import MODEL\n")
   agent_file.write("from mesa import Agent\n")
+  agent_file.write("import sys\n")
+  agent_file.write("sys.modules['os']=None\n")
+  agent_file.write("sys.modules['subprocess']=None\n")
+  agent_file.write("sys.modules['matplotlib']=None\n")
   agent_file.close()
+  
+def break_down():
+  open('generated_functions.py', 'w')
+  open('agent_classes.py', 'w')
+  del globals.MODEL
+  del globals.runtime_context
+  del globals.operator_dict
+  del globals.func_write
+  del globals.model_dict
+  del globals.data_dict
 
 def main():
     orig_stdout = sys.stdout
-    f = open('out.txt', 'w')
+    f = open('behave.out', 'w')
     sys.stdout = f
     
     globals.init()

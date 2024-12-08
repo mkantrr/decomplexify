@@ -49,7 +49,7 @@ const Help: React.FC = () => {
                     <AccordionDetails>
                         <Typography>
                             You can define your model using the input fields on the Create page. The
-                            fields allow you to specify the model, agents, and their routines. Once defined, the model can be created and stepped through
+                            fields allow you to specify the basic routines, model, agents, and their routines. Once defined, the model can be created and stepped through
                             dynamically.
                         </Typography>
                     </AccordionDetails>

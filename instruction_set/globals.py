@@ -14,6 +14,10 @@ def step(self):
   self.schedule.step()
   self.datacollector.collect()
   
+def step_no_data(self):
+  self.schedule.step()
+
+  
 # --------------- END COMMON STEP ROUTINE -----------------------
 
 class Context:
@@ -26,6 +30,7 @@ def init():
   MODEL = AgentBasedModel()
   global runtime_context
   runtime_context = Context()
+  runtime_context.agent_number = 0
  
   global operator_dict
   operator_dict = {
@@ -37,6 +42,9 @@ def init():
     "is less than or equal to": "<=",
     "is greater than or equal to": ">="
   } 
+  
+  global agent_dict
+  agent_dict = dict()
   
   global func_write
   func_write = dict()

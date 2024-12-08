@@ -1,7 +1,7 @@
 from inspect import isclass
 
 from models import AgentBasedModel
-from globals import indent, deindent, runtime_context, MODEL
+import globals
 
 from behave import *
 
@@ -14,16 +14,18 @@ def step_impl(context, agent_name):
   agent_file.write(context.indent + "class {agent_name}(Agent):\n".format(
     agent_name=agent_name
   ))
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   agent_file.write(context.indent + "def __init__(self, unique_id, model):\n") 
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   agent_file.write(context.indent + "global MODEL\n") 
   agent_file.write(context.indent + "super().__init__(unique_id, MODEL)\n")
   agent_file.close()
-  setattr(runtime_context, agent_name, getattr(__import__('agent_classes'), agent_name))
-  assert hasattr(runtime_context, agent_name) and isclass(getattr(runtime_context, agent_name))
-  context.indent = deindent(context.indent)
-  context.indent = deindent(context.indent)
+  setattr(globals.runtime_context, agent_name, getattr(__import__('agent_classes'), agent_name))
+  context.indent = globals.deindent(context.indent)
+  context.indent = globals.deindent(context.indent)
+  
+  globals.agent_dict.update({getattr(globals.runtime_context, agent_name).__name__: globals.runtime_context.agent_number})
+  globals.runtime_context.agent_number += 1
   
   assert MODEL is not None and \
-    (hasattr(runtime_context, agent_name) and isclass(getattr(runtime_context, agent_name)))
+    (hasattr(globals.runtime_context, agent_name) and isclass(getattr(globals.runtime_context, agent_name)))

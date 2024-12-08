@@ -1,7 +1,7 @@
 from importlib import reload
 from types import MethodType
 
-from globals import indent, deindent, MODEL, runtime_context, func_write, operator_dict
+import globals
 import generated_functions
 import agent_classes
 from behave import *
@@ -16,8 +16,9 @@ def step_impl(context, func_name):
       func_name=func_name
   ))
   func_file.close()
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
+  context.inloop = False
 
 @given(u'a routine called {func_name:S} with attribute {parameter:S}')
 @given(u'a routine called {func_name:S} with variable {parameter:S}')
@@ -29,7 +30,7 @@ def step_impl(context, func_name, parameter):
       parameter=parameter
   ))
   func_file.close()
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
   
 @given(u'a routine called {func_name:S} with attributes {parameters:S}')
@@ -42,7 +43,7 @@ def step_impl(context, func_name, parameters):
       parameters=parameters
   ))
   func_file.close()
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
   
 @when(u'it has an attribute {variable:S} that is {value:S}')
@@ -54,8 +55,8 @@ def step_impl(context, func_name, parameters):
 @when(u'it has an attribute {variable:S} equal to {value:S}')
 @when(u'it has a variable {variable:S} equal to {value:S}')
 def step_impl(context, variable, value):
-  if (value in func_write.keys()):
-    value = func_write[value]
+  if (value in globals.func_write.keys()):
+    value = globals.func_write[value]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + '{variable} = {value}\n'.format(
     variable=variable,
@@ -67,76 +68,77 @@ def step_impl(context, variable, value):
     
 @when('something needs to be done for all things in {item}')
 def step_impl(context, item):
-  if (item in func_write.keys()):
-    item = func_write[item]
+  if (item in globals.func_write.keys()):
+    item = globals.func_write[item]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'for thing in {value}:\n'.format(
     value=item
   ))
   func_file.close()
   context.prev_indent = context.indent
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
+  context.inloop = True
   
 @when(u'the condition {item1:S} {operator:S} {item2:S} is met')
 def step_impl(context, item1, operator, item2):
-  if (item1 in func_write.keys()):
-    item1 = func_write[item1]
-  if (item2 in func_write.keys()):
-    item2 = func_write[item2]
+  if (item1 in globals.func_write.keys()):
+    item1 = globals.func_write[item1]
+  if (item2 in globals.func_write.keys()):
+    item2 = globals.func_write[item2]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'if ({item1} {operator} {item2}):\n'.format(
     item1=item1,
-    operator=operator_dict[operator],
+    operator=globals.operator_dict[operator],
     item2=item2
   ))
   func_file.close()
   context.prev_indent = context.indent
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   
 @when(u'the condition {item1:S} {operator:S} {item2:S} is not met')
 def step_impl(context, item1, operator, item2):
-  if (item1 in func_write.keys()):
-    item1 = func_write[item1]
-  if (item2 in func_write.keys()):
-    item2 = func_write[item2]
+  if (item1 in globals.func_write.keys()):
+    item1 = globals.func_write[item1]
+  if (item2 in globals.func_write.keys()):
+    item2 = globals.func_write[item2]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'if not ({item1} {operator} {item2}):\n'.format(
     item1=item1,
-    operator=operator_dict[operator],
+    operator=globals.operator_dict[operator],
     item2=item2
   ))
   func_file.close()
   context.prev_indent = context.indent
-  context.indent = indent(context.indent) 
+  context.indent = globals.indent(context.indent) 
   
 @when(u'it is true that {condition}')
 def step_impl(context, condition):
-  if (condition in func_write.keys()):
-    condition = func_write[condition]
+  if (condition in globals.func_write.keys()):
+    condition = globals.func_write[condition]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'if ({condition}):\n'.format(
     condition=condition
   ))
   func_file.close()
   context.prev_indent = context.indent
-  context.indent = indent(context.indent) 
+  context.indent = globals.indent(context.indent) 
   
 @when(u'it is not true that {condition}')
 def step_impl(context, condition):
-  if (condition in func_write.keys()):
-    condition = func_write[condition]
+  if (condition in globals.func_write.keys()):
+    condition = globals.func_write[condition]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'if not ({condition}):\n'.format(
     condition=condition
   ))
   func_file.close()
   context.prev_indent = context.indent
-  context.indent = indent(context.indent) 
+  context.indent = globals.indent(context.indent) 
   
 @when(u'the previous condition is no longer considered')
 def step_impl(context):
   context.prev_indent = context.indent
-  context.indent = deindent(context.indent)
+  context.indent = globals.deindent(context.indent)
 
 
 @when('the result of {func_name} is {expression}')
@@ -145,8 +147,8 @@ def step_impl(context):
 @when('{func_name} returns {expression}')
 @when('{func_name} yields {expression}')
 def step_impl(context, func_name, expression):
-  if (expression in func_write.keys()):
-    expression = func_write[expression]
+  if (expression in globals.func_write.keys()):
+    expression = globals.func_write[expression]
   func_file = open('generated_functions.py', 'a')
   func_file.write(context.indent[0] + 'return {expression}\n'.format(expression=expression))
   func_file.close()
@@ -159,8 +161,8 @@ def step_impl(context, func_name):
   context.indent = [str(), 0]
   context.prev_indent = context.indent
   reload(generated_functions)
-  setattr(runtime_context, func_name, getattr(__import__('generated_functions'), func_name))
-  assert hasattr(runtime_context, func_name) and callable(getattr(runtime_context, func_name))
+  setattr(globals.runtime_context, func_name, getattr(__import__('generated_functions'), func_name))
+  assert hasattr(globals.runtime_context, func_name) and callable(getattr(globals.runtime_context, func_name))
 
 # --------------- END REGULAR ROUTINES ---------------------
 
@@ -173,7 +175,7 @@ def step_impl(context, func_name):
   func_file.write(context.indent[0] + "def {func_name}(self: AgentBasedModel):\n".format(
       func_name=func_name
   ))
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
   func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
@@ -187,7 +189,7 @@ def step_impl(context, func_name, parameter):
       func_name=func_name,
       parameter=parameter
   ))
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
   func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
@@ -201,7 +203,7 @@ def step_impl(context, func_name, parameters):
       func_name=func_name,
       parameters=parameters
   ))
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
   func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
@@ -211,7 +213,7 @@ def step_impl(context, func_name, parameters):
 @when(u'it has an attribute {variable:S} equal to the model attribute {value:S}')
 @when(u'it has a variable {variable:S} equal to the model variable {value:S}')
 def step_impl(context, variable, value):
-  if (hasattr(MODEL, value)):
+  if (hasattr(globals.MODEL, value)):
     func_file = open('generated_functions.py', 'a')
     func_file.write(context.indent[0] + '{variable} = MODEL.{value}\n'.format(
       variable=variable,
@@ -227,9 +229,9 @@ def step_impl(context, func_name):
   context.indent = [str(), 0]
   context.prev_indent = context.indent
   reload(generated_functions)
-  setattr(MODEL, func_name, 
-          MethodType(getattr(__import__('generated_functions'), func_name), MODEL))
-  assert hasattr(MODEL, func_name) and callable(getattr(MODEL, func_name))
+  setattr(globals.MODEL, func_name, 
+          MethodType(getattr(__import__('generated_functions'), func_name), globals.MODEL))
+  assert hasattr(globals.MODEL, func_name) and callable(getattr(globals.MODEL, func_name))
 
   
 # ---------------- END MODEL ROUTINES ----------------------
@@ -243,7 +245,7 @@ def step_impl(context, agent_name, func_name):
   func_file.write(context.indent[0] + "def {func_name}(self):\n".format(
       func_name=func_name
   ))
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
   func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
@@ -259,7 +261,7 @@ def step_impl(context, agent_name, func_name, parameter):
       func_name=func_name,
       parameter=parameter
   ))
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
   func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
@@ -275,7 +277,7 @@ def step_impl(context, agent_name, func_name, parameters):
       func_name=func_name,
       parameters=parameters
   ))
-  context.indent = indent(context.indent)
+  context.indent = globals.indent(context.indent)
   context.prev_indent = context.indent
   func_file.write(context.indent[0] + "global MODEL\n")
   func_file.close()
@@ -285,7 +287,7 @@ def step_impl(context, agent_name, func_name, parameters):
 @when(u'it has an attribute {variable:S} equal to the {agent_name:S} agent attribute {value:S}')
 @when(u'it has a variable {variable:S} equal to the {agent_name:S} agent variable {value:S}')
 def step_impl(context, variable, agent_name, value):
-  if (hasattr(getattr(runtime_context, agent_name), value)):
+  if (hasattr(getattr(globals.runtime_context, agent_name), value)):
     func_file = open('generated_functions.py', 'a')
     func_file.write(context.indent[0] + '{variable} = self.{value}\n'.format(
       variable=variable,
@@ -302,12 +304,12 @@ def step_impl(context, agent_name, func_name):
   context.prev_indent = context.indent
   reload(generated_functions)
   reload(agent_classes)
-  setattr(getattr(runtime_context, agent_name), func_name,
+  setattr(getattr(globals.runtime_context, agent_name), func_name,
     MethodType(
       getattr(__import__('generated_functions'), func_name), 
       getattr(__import__('agent_classes'), agent_name)))
   
-  assert hasattr(getattr(runtime_context, agent_name), func_name) and \
-    callable(getattr(getattr(runtime_context, agent_name), func_name))
+  assert hasattr(getattr(globals.runtime_context, agent_name), func_name) and \
+    callable(getattr(getattr(globals.runtime_context, agent_name), func_name))
   
 # ---------------- END AGENT ROUTINES ----------------------
