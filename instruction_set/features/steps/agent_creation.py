@@ -33,7 +33,7 @@ def step_impl(context, num_agents, agent_name):
   globals.MODEL.N = int(num_agents)
   for i in range(int(num_agents)):
     agent = getattr(globals.runtime_context, agent_name)(uuid.uuid4().int)
-    globals.func_write.update({"the agent's position": agent.pos})
+    globals.func_write.update({"the agent's position": "self.pos"})
     globals.MODEL.schedule.add(agent) 
     
   num_in_model = 0

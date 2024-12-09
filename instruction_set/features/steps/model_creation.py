@@ -1,5 +1,3 @@
-import uuid
-
 from models import AgentBasedModel
 import globals
 
