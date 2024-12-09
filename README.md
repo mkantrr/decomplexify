@@ -57,10 +57,10 @@ Decomplexify is a powerful tool designed to help students understand and build c
    pip install -r requirements.txt
    ```
 
-4. Run the Flask server:
+4. Run the Flask API:
 
    ```bash
-   flask run
+   python api.py
    ```
 
    The back-end will now be running at `http://localhost:3001`.
@@ -115,18 +115,18 @@ Decomplexify is a powerful tool designed to help students understand and build c
 
 ### Back-End
 
-1. Ensure the Flask back-end server is running.
+1. Ensure the Flask back-end API is running.
    - If using a virtual environment:
      ```bash
      source venv/bin/activate    # On Windows: venv\Scripts\activate
      python api.py
      ```
-     The server will run on `http://localhost:3001`.
+     The API will run on `http://localhost:3001`.
    - If using Docker:
      ```bash
      docker run -p 3001:3001 decomplexify-backend
      ```
-     The server will run on `http://localhost:3001`.
+     The API will run on `http://localhost:3001`.
 
 ### Front-End
 
@@ -146,7 +146,7 @@ Decomplexify is a powerful tool designed to help students understand and build c
 
 Once both the back-end and front-end servers are running:
 - Visit `http://localhost:3000` in your browser to access Decomplexify.
-- Ensure the back-end server is correctly connected at `http://localhost:3001`.
+- Ensure the back-end API is correctly connected at `http://localhost:3001`.
 
 ## License
 
